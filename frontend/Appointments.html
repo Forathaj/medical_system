@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointments</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Your Appointments</h1>
+
+        <!-- Book Appointment Form -->
+        <section class="form-section">
+            <h2>Book an Appointment</h2>
+            <form id="bookForm">
+                <label for="specialty">Specialty:</label>
+                <select id="specialty" required>
+                    <option value="Cardiology">Cardiology</option>
+                    <option value="Neurology">Neurology</option>
+                    <option value="Dermatology">Dermatology</option>
+                    <option value="Orthopedics">Orthopedics</option>
+                    <option value="Pediatrics">Pediatrics</option>
+                    <option value="Endocrinology">Endocrinology</option>
+                    <option value="Gastroenterology">Gastroenterology</option>
+                    <option value="Psychiatry">Psychiatry</option>
+                    <option value="Oncology">Oncology</option>
+                    <option value="Pulmonology">Pulmonology</option>
+                </select>
+
+                <label for="date">Date:</label>
+                <input type="date" id="date" min="" required>
+
+                <script>
+                    // Get today's date in YYYY-MM-DD format
+                    const today = new Date().toISOString().split("T")[0];
+                    document.getElementById("date").setAttribute("min", today);
+                </script>
+
+                <label for="time">Time:</label>
+                <input type="time" id="time" required>
+
+                <button type="submit">Book Appointment</button>
+            </form>
+        </section>
+
+        <!-- Appointments List -->
+        <section class="appointments-section">
+            <h2>Upcoming Appointments</h2>
+            <ul id="appointmentsList"></ul>
+        </section>
+    </div>
+
+
+    <script>
+        document.getElementById('getAdviceBtn').addEventListener('click', async () => {
+            const symptoms = document.getElementById('symptoms').value;
+
+            const response = await fetch('http://localhost:5000/ai/symptom-checker', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ symptoms })
+            });
+
+            const data = await response.json();
+            document.getElementById('aiSuggestion').textContent = `Recommendation: ${data.suggestion}`;
+        });
+    </script>
+    <section class="ai-suggestions">
+        <h2>🤖 Get AI Medical Advice</h2>
+        <p>Describe your symptoms, and our AI will recommend the most suitable medical specialty for you.</p>
+        <textarea id="symptomsInput" placeholder="Enter your symptoms here..." rows="4"></textarea>
+        <button id="getAdviceBtn">Get Medical Specialty</button>
+        <div id="aiResult" class="ai-result"></div>
+    </section>
+
+    <style>
+        .ai-suggestions {
+            background: #f4f4f8;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 15px;
+        }
+
+        .ai-suggestions h2 {
+            font-size: 1.8rem;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .ai-suggestions p {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        #symptomsInput {
+            width: 100%;
+            padding: 10px;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        #getAdviceBtn {
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        #getAdviceBtn:hover {
+            background-color: #45a049;
+        }
+
+        .ai-result {
+            margin-top: 15px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+
+    <script>
+        document.getElementById("getAdviceBtn").addEventListener("click", async () => {
+            const symptoms = document.getElementById("symptomsInput").value;
+            const response = await fetch("http://localhost:5000/ai/symptom-checker", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ symptoms })
+            });
+
+            const data = await response.json();
+            document.getElementById("aiResult").textContent = "Suggested Specialty: " + data.specialty;
+        });
+    </script>
+
+
+
+    <script src="app.js"></script>
+</body>
+
+</html>
