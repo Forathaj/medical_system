@@ -18,6 +18,7 @@
             <form id="bookForm">
                 <label for="specialty">Specialty:</label>
                 <select id="specialty" required>
+                    <option value="FamilyDoctor">Family Doctor</option>
                     <option value="Cardiology">Cardiology</option>
                     <option value="Neurology">Neurology</option>
                     <option value="Dermatology">Dermatology</option>
@@ -133,14 +134,26 @@
     <script>
         document.getElementById("getAdviceBtn").addEventListener("click", async () => {
             const symptoms = document.getElementById("symptomsInput").value;
-            const response = await fetch("http://localhost:5000/ai/symptom-checker", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ symptoms })
-            });
 
-            const data = await response.json();
-            document.getElementById("aiResult").textContent = "Suggested Specialty: " + data.specialty;
+            try {
+                const response = await fetch("http://localhost:5000/ai/symptom-checker", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ symptoms }),
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch AI recommendation");
+                }
+
+                const data = await response.json();
+                console.log("🌐 AI Response from server:", data);
+
+                document.getElementById("aiResult").textContent = data.recommendations || "No suggestion available.";
+            } catch (error) {
+                console.error("❌ Error fetching AI data:", error.message);
+                document.getElementById("aiResult").textContent = "Error fetching AI recommendation.";
+            }
         });
     </script>
 
