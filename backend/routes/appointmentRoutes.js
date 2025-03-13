@@ -76,4 +76,7 @@ export const appointmentRoutes = async (req, res, client) => {
       res.end(JSON.stringify({ message: "Appointment canceled successfully" }));
     });
   }
+
+
+  
 };
